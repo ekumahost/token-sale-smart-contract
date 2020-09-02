@@ -1,5 +1,6 @@
 module.exports = {
-
+// this file is used for config; truffle-config.js is the same thing, but used on windows only
+// because of interfernece while running confi command in window
 network : {
 
 	development : {
