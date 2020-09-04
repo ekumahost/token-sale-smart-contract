@@ -25,10 +25,21 @@ uint256 _value
 	);
 
 
+event Approval(
+    address indexed _owner,
+    address indexed _spender,
+    uint256 _value
 
-// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
+	);
+
+
+
+
+     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
 	uint256 public totalSupply; // storage >> state variable
 	mapping(address => uint256) public balanceOf; // associative array, key value store, get the balance of token
+	mapping(address => mapping(address => uint256)) public allowance;  // public variable instead of function: so we can keep track of approvals == >> mapping(address => uint256)
+
 
 	constructor (uint256 _initialSupply) public { // convention use _ to start local variables
 
@@ -58,9 +69,68 @@ uint256 _value
      // transfer event
      emit Transfer(msg.sender, _to, _value );
 
-return true;
+// tranfer function test not passing yet, sayiing no event was fired...
+
+        return true;
 
      }
+
+
+
+// approve
+     function approve(address _spender, uint256 _value) public returns (bool success) {
+
+
+
+           allowance[msg.sender][_spender] = _value;
+
+// emit Approval
+    emit Approval(msg.sender, _spender, _value );
+    return true;
+
+
+     	}
+
+
+
+
+
+
+
+// Deletgated Transfer from one account to another without the sender initiating it..
+
+
+// tansfer from
+
+function transferFrom(address _from, address _to, uint256 _value) public returns (bool success){
+
+// user to user transfer
+
+// require _from has enough token
+
+require (_value <= balanceOf[_from]);
+
+
+// require allowance is big enough 
+require (_value <= allowance[_from][msg.sender]);
+
+// change balance
+     balanceOf[_from] -= _value;
+     balanceOf[_to] += _value;
+
+
+// update allowance
+allowance[_from][msg.sender] -= _value;
+
+
+// transfer event
+emit Transfer(_from, _to,_value);
+
+// return true.
+
+return true;
+
+}
 
 
 
